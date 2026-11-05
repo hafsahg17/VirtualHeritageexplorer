@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -300,16 +299,6 @@ h2 {
     background: #ffffff12;
     border: 1px solid #ffffff25;
     border-radius: 10px;
-}
-
-select {
-    padding: 13px;
-    width: 100%;
-    max-width: 350px;
-    border: 1px solid var(--gold);
-    border-radius: 5px;
-    margin-bottom: 15px;
-    font-size: 14px;
 }
 
 .audio-buttons {
@@ -680,21 +669,13 @@ footer a {
         LISTEN & LEARN
     </div>
 
-    <h2>Multilingual Audio Guide</h2>
+    <h2>English Audio Guide</h2>
 
     <p>
-        Listen to the history of the Taj Mahal in your preferred language.
+        Listen to the history of the Taj Mahal in English.
     </p>
 
     <div class="audio-box">
-
-        <select id="language">
-            <option value="en-IN">English</option>
-            <option value="hi-IN">Hindi</option>
-            <option value="kn-IN">Kannada</option>
-            <option value="te-IN">Telugu</option>
-            <option value="ta-IN">Tamil</option>
-        </select>
 
         <div class="audio-buttons">
 
@@ -709,7 +690,7 @@ footer a {
         </div>
 
         <p id="audioStatus" style="margin-top:15px;font-size:12px;">
-            Select a language and press Play.
+            Press Play to listen to the English audio guide.
         </p>
 
     </div>
@@ -780,19 +761,10 @@ footer a {
 
 <script>
 
-const guides = {
+const guideText = "Welcome to the Taj Mahal. Located in Agra, Uttar Pradesh, the Taj Mahal is one of India's most famous monuments. Mughal Emperor Shah Jahan commissioned this beautiful mausoleum in memory of his wife Mumtaz Mahal. Construction began in 1632. The monument is famous for its white marble, beautiful central dome, four minarets and intricate decorative work. Today, it is recognised as a UNESCO World Heritage Site and is admired by visitors from around the world.";
 
-    "en-IN": "Welcome to the Taj Mahal. Located in Agra, Uttar Pradesh, the Taj Mahal is one of India's most famous monuments. Mughal Emperor Shah Jahan commissioned this beautiful mausoleum in memory of his wife Mumtaz Mahal. Construction began in 1632. The monument is famous for its white marble, beautiful central dome, four minarets and intricate decorative work. Today, it is recognised as a UNESCO World Heritage Site and is admired by visitors from around the world.",
-
-    "hi-IN": "ताजमहल में आपका स्वागत है। ताजमहल उत्तर प्रदेश के आगरा में स्थित एक प्रसिद्ध ऐतिहासिक स्मारक है। मुगल सम्राट शाहजहाँ ने अपनी पत्नी मुमताज महल की याद में इसका निर्माण करवाया था। इसका निर्माण 1632 में शुरू हुआ था। यह अपनी सफेद संगमरमर की सुंदरता और शानदार वास्तुकला के लिए प्रसिद्ध है।",
-
-    "kn-IN": "ತಾಜ್ ಮಹಲಿಗೆ ಸ್ವಾಗತ. ತಾಜ್ ಮಹಲ್ ಉತ್ತರ ಪ್ರದೇಶದ ಆಗ್ರಾದಲ್ಲಿರುವ ಪ್ರಸಿದ್ಧ ಐತಿಹಾಸಿಕ ಸ್ಮಾರಕವಾಗಿದೆ. ಮೊಘಲ್ ಚಕ್ರವರ್ತಿ ಷಹಜಹಾನ್ ತನ್ನ ಪತ್ನಿ ಮುಮ್ತಾಜ್ ಮಹಲ್ ಅವರ ನೆನಪಿಗಾಗಿ ಇದನ್ನು ನಿರ್ಮಿಸಿದರು. ಇದರ ನಿರ್ಮಾಣವು 1632ರಲ್ಲಿ ಪ್ರಾರಂಭವಾಯಿತು. ಇದು ಬಿಳಿ ಅಮೃತಶಿಲೆ ಮತ್ತು ಸುಂದರವಾದ ವಾಸ್ತುಶಿಲ್ಪಕ್ಕೆ ಪ್ರಸಿದ್ಧವಾಗಿದೆ.",
-
-    "te-IN": "తాజ్ మహల్‌కు స్వాగతం. తాజ్ మహల్ ఉత్తరప్రదేశ్‌లోని ఆగ్రాలో ఉన్న ప్రసిద్ధ చారిత్రక కట్టడం. మొఘల్ చక్రవర్తి షాజహాన్ తన భార్య ముంతాజ్ మహల్ జ్ఞాపకార్థం దీనిని నిర్మించారు. దీని నిర్మాణం 1632లో ప్రారంభమైంది. తెల్లని పాలరాయి మరియు అద్భుతమైన నిర్మాణ శైలికి ఇది ప్రసిద్ధి చెందింది.",
-
-    "ta-IN": "தாஜ்மஹாலுக்கு உங்களை வரவேற்கிறோம். தாஜ்மஹால் உத்தரப் பிரதேசத்தின் ஆக்ராவில் அமைந்துள்ள புகழ்பெற்ற வரலாற்றுச் சின்னமாகும். முகலாயப் பேரரசர் ஷாஜஹான் தனது மனைவி மும்தாஜ் மஹாலின் நினைவாக இதைக் கட்டினார். இதன் கட்டுமானம் 1632ஆம் ஆண்டு தொடங்கியது. வெள்ளை பளிங்குக் கல் மற்றும் அழகிய கட்டிடக்கலைக்காக இது புகழ்பெற்றது."
-
-};
+let currentUtterance = null;
+let requestNumber = 0;
 
 function playGuide() {
 
@@ -802,43 +774,122 @@ function playGuide() {
         return;
     }
 
+    requestNumber++;
+
+    const thisRequest = requestNumber;
+
     speechSynthesis.cancel();
 
-    const lang = document.getElementById("language").value;
+    const status = document.getElementById("audioStatus");
 
-    const speech = new SpeechSynthesisUtterance(guides[lang]);
+    status.textContent = "Loading English audio guide...";
 
-    speech.lang = lang;
-    speech.rate = 0.85;
-    speech.pitch = 1;
+    function speakWhenReady() {
 
-    speech.onstart = function() {
-        document.getElementById("audioStatus").textContent =
-            "Audio guide is playing...";
-    };
+        if (thisRequest !== requestNumber) return;
 
-    speech.onend = function() {
-        document.getElementById("audioStatus").textContent =
-            "Audio guide completed.";
-    };
+        const voices = speechSynthesis.getVoices();
 
-    speech.onerror = function() {
-        document.getElementById("audioStatus").textContent =
-            "Unable to play this language. Check available voices on your device.";
-    };
+        const englishVoice =
+            voices.find(voice =>
+                voice.lang &&
+                voice.lang.toLowerCase() === "en-in"
+            ) ||
+            voices.find(voice =>
+                voice.lang &&
+                voice.lang.toLowerCase().startsWith("en")
+            );
 
-    speechSynthesis.speak(speech);
+        const speech = new SpeechSynthesisUtterance(guideText);
+
+        speech.lang = "en-IN";
+        speech.rate = 0.88;
+        speech.pitch = 1;
+        speech.volume = 1;
+
+        if (englishVoice) {
+            speech.voice = englishVoice;
+        }
+
+        speech.onstart = function() {
+
+            if (thisRequest === requestNumber) {
+                status.textContent =
+                    "English audio guide is playing...";
+            }
+
+        };
+
+        speech.onend = function() {
+
+            if (thisRequest === requestNumber) {
+                status.textContent =
+                    "Audio guide completed.";
+
+                currentUtterance = null;
+            }
+
+        };
+
+        speech.onerror = function() {
+
+            if (thisRequest === requestNumber) {
+                status.textContent =
+                    "Unable to play the audio guide. Please try again.";
+
+                currentUtterance = null;
+            }
+
+        };
+
+        currentUtterance = speech;
+
+        speechSynthesis.speak(speech);
+
+    }
+
+    if (speechSynthesis.getVoices().length > 0) {
+
+        speakWhenReady();
+
+    } else {
+
+        speechSynthesis.onvoiceschanged = function() {
+
+            if (thisRequest === requestNumber) {
+                speakWhenReady();
+            }
+
+        };
+
+        setTimeout(function() {
+
+            if (thisRequest === requestNumber && !currentUtterance) {
+                speakWhenReady();
+            }
+
+        }, 1500);
+
+    }
+
 }
 
+
 function stopGuide() {
+
+    requestNumber++;
 
     if ("speechSynthesis" in window) {
         speechSynthesis.cancel();
     }
 
+    currentUtterance = null;
+
     document.getElementById("audioStatus").textContent =
         "Audio guide stopped.";
+
 }
+
 
 function showARMessage() {
 
@@ -847,10 +898,13 @@ function showARMessage() {
 
 }
 
+
 window.addEventListener("beforeunload", function() {
+
     if ("speechSynthesis" in window) {
         speechSynthesis.cancel();
     }
+
 });
 
 </script>
