@@ -254,6 +254,8 @@ section { padding: 80px 9%; }
     font-size: 14px;
 }
 
+/* ENGLISH AUDIO GUIDE */
+
 .audio {
     background: var(--brown);
     color: white;
@@ -276,20 +278,12 @@ section { padding: 80px 9%; }
     flex-wrap: wrap;
 }
 
-select, button {
-    padding: 13px 18px;
+button {
+    padding: 13px 22px;
     border: none;
     border-radius: 3px;
     font-family: 'DM Sans', sans-serif;
     font-size: 14px;
-}
-
-select {
-    background: white;
-    color: var(--brown);
-}
-
-button {
     cursor: pointer;
     background: var(--gold);
     color: var(--dark);
@@ -297,6 +291,11 @@ button {
 }
 
 button:hover { background: #e0b76e; }
+
+.stop {
+    background: white;
+    color: var(--dark);
+}
 
 #speechStatus {
     margin-top: 18px;
@@ -405,6 +404,7 @@ footer span { color: var(--gold); }
             story of a rich cultural and artistic past.
         </p>
     </div>
+
     <img
       src="https://commons.wikimedia.org/wiki/Special:FilePath/Virupaksha%20temple%20hampi.jpg"
       alt="Virupaksha Temple at Hampi">
@@ -442,12 +442,14 @@ footer span { color: var(--gold); }
                 the city developed into an important centre of trade,
                 religion, art and culture.
             </p>
+
             <p class="content-text">
                 Traders from different parts of the world visited
                 Vijayanagara, bringing wealth and cultural exchange.
                 The city was known for its grand temples, busy markets,
                 royal buildings and advanced water-management systems.
             </p>
+
             <p class="content-text">
                 Following the Battle of Talikota in 1565, the city
                 suffered extensive destruction and gradually declined.
@@ -580,28 +582,24 @@ footer span { color: var(--gold); }
     </div>
 </section>
 
+<!-- ENGLISH AUDIO GUIDE -->
+
 <section class="audio" id="audio">
     <div class="section-subtitle">Listen and Discover</div>
-    <h2 class="section-title">Multilingual Audio Guide</h2>
+    <h2 class="section-title">Audio Guide</h2>
+
     <p>
-        Explore the history of Hampi through an audio narration.
-        Select your preferred language and listen to the heritage story.
+        Explore the history of Hampi through an English audio narration.
     </p>
 
     <div class="audio-controls">
-        <select id="language">
-            <option value="en-IN">English</option>
-            <option value="hi-IN">Hindi</option>
-            <option value="kn-IN">Kannada</option>
-            <option value="te-IN">Telugu</option>
-            <option value="ta-IN">Tamil</option>
-        </select>
-
-        <button onclick="playAudio()">▶ Play Audio</button>
-        <button onclick="stopAudio()">■ Stop</button>
+        <button onclick="playAudio()">▶ Play Audio Guide</button>
+        <button class="stop" onclick="stopAudio()">■ Stop</button>
     </div>
 
-    <div id="speechStatus">Select a language to begin.</div>
+    <div id="speechStatus">
+        Press Play to listen to the Hampi audio guide.
+    </div>
 </section>
 
 <section class="ar-section">
@@ -610,12 +608,15 @@ footer span { color: var(--gold); }
 
     <div class="ar-box">
         <h3>Bring Heritage to Life</h3>
+
         <p>
             Experience historical monuments through an interactive
             Augmented Reality experience. Scan a supported heritage
             image to explore a digital 3D monument.
         </p>
+
         <button onclick="showARMessage()">Explore in AR</button>
+
         <p id="arMessage" style="margin-top:18px; color:#8b6540;"></p>
     </div>
 </section>
@@ -627,64 +628,148 @@ footer span { color: var(--gold); }
 </footer>
 
 <script>
-const narrations = {
-    "en-IN": "Welcome to Hampi, the historic capital of the Vijayanagara Empire. Hampi flourished as a centre of trade, culture, religion and architecture. It is famous for the Virupaksha Temple, Vittala Temple and its magnificent stone chariot. The ruins of Hampi preserve the legacy of a powerful kingdom and its remarkable artistic achievements. Today, Hampi is recognised as a UNESCO World Heritage Site.",
-    
-    "hi-IN": "हम्पी में आपका स्वागत है। हम्पी विजयनगर साम्राज्य की ऐतिहासिक राजधानी थी। यह व्यापार, संस्कृति, धर्म और वास्तुकला का एक महत्वपूर्ण केंद्र था। हम्पी अपने विरुपाक्ष मंदिर, विट्ठल मंदिर और प्रसिद्ध पत्थर के रथ के लिए जाना जाता है। आज हम्पी यूनेस्को विश्व धरोहर स्थल है।",
 
-    "kn-IN": "ಹಂಪಿಗೆ ಸ್ವಾಗತ. ಹಂಪಿ ವಿಜಯನಗರ ಸಾಮ್ರಾಜ್ಯದ ಐತಿಹಾಸಿಕ ರಾಜಧಾನಿಯಾಗಿತ್ತು. ಇದು ವ್ಯಾಪಾರ, ಸಂಸ್ಕೃತಿ, ಧರ್ಮ ಮತ್ತು ವಾಸ್ತುಶಿಲ್ಪದ ಪ್ರಮುಖ ಕೇಂದ್ರವಾಗಿತ್ತು. ವಿರೂಪಾಕ್ಷ ದೇವಸ್ಥಾನ, ವಿಠ್ಠಲ ದೇವಸ್ಥಾನ ಮತ್ತು ಪ್ರಸಿದ್ಧ ಕಲ್ಲಿನ ರಥ ಹಂಪಿಯ ಪ್ರಮುಖ ಆಕರ್ಷಣೆಗಳಾಗಿವೆ. ಇಂದು ಹಂಪಿ ಯುನೆಸ್ಕೋ ವಿಶ್ವ ಪರಂಪರೆಯ ತಾಣವಾಗಿದೆ.",
+// ENGLISH HAMPI AUDIO GUIDE
 
-    "te-IN": "హంపికి స్వాగతం. హంపి విజయనగర సామ్రాజ్యానికి చారిత్రక రాజధానిగా ఉండేది. ఇది వాణిజ్యం, సంస్కృతి, మతం మరియు వాస్తుశిల్పానికి ముఖ్యమైన కేంద్రంగా నిలిచింది. విరూపాక్ష దేవాలయం, విఠల దేవాలయం మరియు ప్రసిద్ధ రాతి రథం హంపి యొక్క ప్రధాన ఆకర్షణలు. నేడు హంపి యునెస్కో ప్రపంచ వారసత్వ ప్రదేశంగా గుర్తింపు పొందింది.",
+const narration = "Welcome to Hampi, the historic capital of the Vijayanagara Empire. Hampi flourished as a centre of trade, culture, religion and architecture. It is famous for the Virupaksha Temple, Vittala Temple and its magnificent stone chariot. The ruins of Hampi preserve the legacy of a powerful kingdom and its remarkable artistic achievements. The Vijayanagara Empire was founded in 1336 by Harihara I and Bukka Raya I. Under rulers such as Krishnadevaraya, Hampi became an important centre of trade, religion and culture. Following the Battle of Talikota in 1565, the city suffered extensive destruction. Today, Hampi is recognised as a UNESCO World Heritage Site and continues to attract visitors from around the world.";
 
-    "ta-IN": "ஹம்பிக்கு வரவேற்கிறோம். ஹம்பி விஜயநகரப் பேரரசின் வரலாற்றுச் சிறப்புமிக்க தலைநகரமாக இருந்தது. இது வணிகம், கலாச்சாரம், மதம் மற்றும் கட்டிடக்கலையின் முக்கிய மையமாக விளங்கியது. விருபாக்ஷா கோவில், விட்டலா கோவில் மற்றும் புகழ்பெற்ற கல் தேர் ஆகியவை ஹம்பியின் முக்கிய சிறப்புகளாகும். இன்று ஹம்பி யுனெஸ்கோ உலக பாரம்பரிய தளமாக அங்கீகரிக்கப்பட்டுள்ளது."
-};
+let currentUtterance = null;
+let requestNumber = 0;
 
 function playAudio() {
-    if (!('speechSynthesis' in window)) {
-        document.getElementById("speechStatus").textContent =
-            "Audio narration is not supported in this browser.";
+
+    const status = document.getElementById("speechStatus");
+
+    if (!("speechSynthesis" in window) ||
+        !("SpeechSynthesisUtterance" in window)) {
+
+        status.textContent =
+            "Your browser does not support speech playback. Please try an updated browser.";
+
         return;
     }
 
+    const thisRequest = ++requestNumber;
+
     window.speechSynthesis.cancel();
 
-    const language = document.getElementById("language").value;
-    const speech = new SpeechSynthesisUtterance(narrations[language]);
+    status.textContent = "Preparing English audio...";
 
-    speech.lang = language;
-    speech.rate = 0.9;
-    speech.pitch = 1;
+    const speak = () => {
 
-    speech.onstart = function() {
-        document.getElementById("speechStatus").textContent =
-            "Audio narration is playing...";
+        if (thisRequest !== requestNumber) return;
+
+        const voices = window.speechSynthesis.getVoices();
+
+        // Find an available English voice.
+        // If unavailable, use the system default voice.
+
+        const englishVoice = voices.find(voice =>
+            voice.lang &&
+            voice.lang.toLowerCase().startsWith("en")
+        );
+
+        const utterance = new SpeechSynthesisUtterance(narration);
+
+        if (englishVoice) {
+            utterance.voice = englishVoice;
+            utterance.lang = englishVoice.lang;
+        } else {
+            utterance.lang = "en";
+        }
+
+        utterance.rate = 0.9;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        utterance.onstart = () => {
+
+            if (thisRequest !== requestNumber) return;
+
+            status.textContent =
+                "Playing Hampi audio guide...";
+        };
+
+        utterance.onend = () => {
+
+            if (thisRequest !== requestNumber) return;
+
+            status.textContent =
+                "Audio guide completed.";
+        };
+
+        utterance.onerror = (event) => {
+
+            if (thisRequest !== requestNumber) return;
+
+            if (event.error !== "canceled" &&
+                event.error !== "interrupted") {
+
+                status.textContent =
+                    "Audio playback error. Please check your browser settings or try another browser.";
+            }
+        };
+
+        currentUtterance = utterance;
+
+        window.speechSynthesis.speak(utterance);
     };
 
-    speech.onend = function() {
-        document.getElementById("speechStatus").textContent =
-            "Audio narration completed.";
-    };
+    const voices = window.speechSynthesis.getVoices();
 
-    speech.onerror = function() {
-        document.getElementById("speechStatus").textContent =
-            "Could not play audio. Please try again.";
-    };
+    if (voices.length > 0) {
 
-    window.speechSynthesis.speak(speech);
+        speak();
+
+    } else {
+
+        window.speechSynthesis.onvoiceschanged = () => {
+
+            window.speechSynthesis.onvoiceschanged = null;
+
+            speak();
+        };
+
+        window.setTimeout(() => {
+
+            if (thisRequest === requestNumber &&
+                !window.speechSynthesis.speaking) {
+
+                speak();
+            }
+
+        }, 1000);
+    }
 }
 
 function stopAudio() {
-    if ('speechSynthesis' in window) {
+
+    requestNumber++;
+
+    if ("speechSynthesis" in window) {
         window.speechSynthesis.cancel();
     }
+
+    currentUtterance = null;
+
     document.getElementById("speechStatus").textContent =
-        "Audio narration stopped.";
+        "Audio guide stopped.";
 }
 
 function showARMessage() {
+
     document.getElementById("arMessage").textContent =
         "AR integration will open here once the Unity application is connected.";
 }
+
+window.addEventListener("beforeunload", () => {
+
+    if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+    }
+
+});
+
 </script>
 
 </body>
