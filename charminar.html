@@ -235,7 +235,7 @@ h2 {
     color:var(--brown);
 }
 
-/* ENGLISH AUDIO GUIDE */
+/* AUDIO GUIDE */
 
 .audio-section {
     background:var(--dark);
@@ -258,6 +258,16 @@ h2 {
     background:#ffffff12;
     border:1px solid #ffffff25;
     border-radius:10px;
+}
+
+select {
+    padding:13px;
+    width:100%;
+    max-width:350px;
+    border:1px solid var(--gold);
+    border-radius:5px;
+    margin-bottom:15px;
+    font-size:14px;
 }
 
 .audio-buttons {
@@ -502,21 +512,22 @@ footer a { color:var(--gold); }
     </p>
 </section>
 
-<!-- ENGLISH AUDIO GUIDE -->
+<!-- FIVE-LANGUAGE AUDIO GUIDE -->
 
 <section class="audio-section" id="audio">
     <div class="small-heading">LISTEN & LEARN</div>
-    <h2>Audio Guide</h2>
-    <p>Listen to the history of Charminar in English.</p>
+    <h2>Multilingual Audio Guide</h2>
+
+    <p>Listen to the history of Charminar in your preferred language.</p>
 
     <div class="audio-box">
-        <div class="audio-buttons">
+<div class="audio-buttons">
             <button class="play" onclick="playGuide()">▶ Play Audio Guide</button>
             <button class="stop" onclick="stopGuide()">■ Stop</button>
         </div>
 
         <p class="audio-status" id="audioStatus" aria-live="polite">
-            Press Play to listen to the Charminar audio guide.
+            Press Play to listen to the English audio guide.
         </p>
     </div>
 </section>
@@ -553,145 +564,50 @@ footer a { color:var(--gold); }
     <p style="margin-top:15px;">© 2026 Virtual Heritage Explorer</p>
 </footer>
 
+
+<audio id="heritageAudio" preload="auto"><source src="audio/charminar.mp3" type="audio/mpeg"></audio>
+
 <script>
+const heritageAudio = document.getElementById("heritageAudio");
+const audioStatus = document.getElementById("audioStatus");
 
-const narration = "Welcome to Charminar, the iconic monument of Hyderabad, Telangana. Charminar was constructed in 1591 by Muhammad Quli Qutb Shah, the fifth ruler of the Qutb Shahi dynasty. Its name comes from two words: Char meaning four and Minar meaning towers. The monument is famous for its four grand minarets, beautiful arches and Indo-Islamic architecture. It is an important symbol of Hyderabad's history, culture and heritage. Visitors from across the world come to admire its architecture and historical importance.";
-
-let currentUtterance = null;
-let requestNumber = 0;
-
-function playGuide() {
-
-    const status = document.getElementById("audioStatus");
-
-    if (!("speechSynthesis" in window) ||
-        !("SpeechSynthesisUtterance" in window)) {
-
-        status.textContent =
-            "Audio playback is not supported by this browser. Please try an updated browser.";
-
-        return;
-    }
-
-    const thisRequest = ++requestNumber;
-
-    window.speechSynthesis.cancel();
-
-    status.textContent = "Preparing English audio...";
-
-    const speak = () => {
-
-        if (thisRequest !== requestNumber) return;
-
-        const utterance = new SpeechSynthesisUtterance(narration);
-
-        const voices = window.speechSynthesis.getVoices();
-
-        // Prefer an English voice.
-        // If unavailable, use the system default voice.
-
-        const englishVoice = voices.find(voice =>
-            voice.lang &&
-            voice.lang.toLowerCase().startsWith("en")
-        );
-
-        if (englishVoice) {
-            utterance.voice = englishVoice;
-            utterance.lang = englishVoice.lang;
-        } else {
-            utterance.lang = "en";
-        }
-
-        utterance.rate = 0.9;
-        utterance.pitch = 1;
-        utterance.volume = 1;
-
-        utterance.onstart = () => {
-            status.textContent =
-                "Playing Charminar audio guide...";
-        };
-
-        utterance.onend = () => {
-
-            if (thisRequest === requestNumber) {
-                status.textContent =
-                    "Audio guide completed.";
-            }
-        };
-
-        utterance.onerror = (event) => {
-
-            if (thisRequest === requestNumber &&
-                event.error !== "canceled" &&
-                event.error !== "interrupted") {
-
-                status.textContent =
-                    "Audio could not be played. Please check your browser's speech settings or try another browser.";
-            }
-        };
-
-        currentUtterance = utterance;
-
-        window.speechSynthesis.speak(utterance);
-    };
-
-    // Wait for browser voices if they are not loaded yet.
-
-    const voices = window.speechSynthesis.getVoices();
-
-    if (voices.length > 0) {
-
-        speak();
-
-    } else {
-
-        window.speechSynthesis.onvoiceschanged = () => {
-
-            window.speechSynthesis.onvoiceschanged = null;
-
-            speak();
-        };
-
-        window.setTimeout(() => {
-
-            if (thisRequest === requestNumber &&
-                !window.speechSynthesis.speaking) {
-
-                speak();
-            }
-
-        }, 1000);
-    }
+function playHeritageAudio() {
+    if (!heritageAudio) return;
+    heritageAudio.pause();
+    heritageAudio.currentTime = 0;
+    audioStatus.textContent = "Loading English audio guide...";
+    heritageAudio.play().then(() => {
+        audioStatus.textContent = "English audio guide is playing...";
+    }).catch(() => {
+        audioStatus.textContent = "Unable to play audio. Check your internet connection and try again.";
+    });
 }
 
-function stopGuide() {
-
-    requestNumber++;
-
-    if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-    }
-
-    document.getElementById("audioStatus").textContent =
-        "Audio guide stopped.";
+function stopHeritageAudio() {
+    if (!heritageAudio) return;
+    heritageAudio.pause();
+    heritageAudio.currentTime = 0;
+    audioStatus.textContent = "Audio guide stopped.";
 }
+
+heritageAudio.addEventListener("ended", () => {
+    audioStatus.textContent = "Audio guide completed.";
+});
+
+// Keep compatibility with the existing Play/Stop button names on each page.
+function playGuide() { playHeritageAudio(); }
+function playAudio() { playHeritageAudio(); }
+function speakGuide() { playHeritageAudio(); }
+function stopGuide() { stopHeritageAudio(); }
+function stopAudio() { stopHeritageAudio(); }
 
 function showARMessage() {
-
     document.getElementById("arStatus").textContent =
         "Connect your Unity Android application to enable the AR scanner.";
 }
 
-window.addEventListener("beforeunload", () => {
-
-    if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-    }
-
-});
-
+window.addEventListener("beforeunload", stopHeritageAudio);
 </script>
 
 </body>
 </html>
-
