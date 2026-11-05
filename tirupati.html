@@ -249,6 +249,13 @@ section {
     box-shadow: 0 5px 25px #0000000d;
 }
 
+select {
+    padding: 11px;
+    border: 1px solid #c9b99f;
+    border-radius: 4px;
+    margin: 10px;
+}
+
 .audio-box button {
     margin: 8px;
 }
@@ -590,15 +597,16 @@ footer {
         <h3>Listen to the Audio Guide</h3>
 
         <p style="margin-top:10px;color:#66594e">
-            Listen to the history of Tirupati Temple in English.
+            Listen to a short introduction to Tirupati Temple in English.
         </p>
+<br>
 
         <button class="btn" onclick="speakGuide()">
-            ▶ Play Audio Guide
+            Play Audio Guide
         </button>
 
         <button class="btn" onclick="stopGuide()" style="background:#ddd">
-            ■ Stop
+            Stop
         </button>
 
         <p id="audioStatus">
@@ -643,137 +651,42 @@ footer {
 </footer>
 
 <!-- JAVASCRIPT -->
+
+<audio id="heritageAudio" preload="auto"><source src="audio/tirupati.mp3" type="audio/mpeg"></audio>
+
 <script>
+const heritageAudio = document.getElementById("heritageAudio");
+const audioStatus = document.getElementById("audioStatus");
 
-const guideText =
-    "Welcome to Sri Venkateswara Temple, located in Tirumala near Tirupati in Andhra Pradesh. The temple is dedicated to Lord Venkateswara, a form of Lord Vishnu. It is famous for its Dravidian architecture, beautiful gopurams, gold-plated vimana and rich traditions. The temple is one of India's most important pilgrimage destinations.";
-
-let currentUtterance = null;
-let requestNumber = 0;
-
-
-function speakGuide() {
-
-    if (!('speechSynthesis' in window)) {
-
-        document.getElementById('audioStatus').textContent =
-            'Audio guide is not supported in this browser.';
-
-        return;
-    }
-
-    const thisRequest = ++requestNumber;
-
-    window.speechSynthesis.cancel();
-
-    const status = document.getElementById('audioStatus');
-
-    status.textContent = 'Loading English audio guide...';
-
-    function speakWhenReady() {
-
-        if (thisRequest !== requestNumber) return;
-
-        const voices = window.speechSynthesis.getVoices();
-
-        const englishVoice =
-            voices.find(voice =>
-                voice.lang &&
-                voice.lang.toLowerCase() === 'en-in'
-            ) ||
-            voices.find(voice =>
-                voice.lang &&
-                voice.lang.toLowerCase().startsWith('en')
-            );
-
-        const speech = new SpeechSynthesisUtterance(guideText);
-
-        speech.lang = 'en-IN';
-        speech.rate = 0.88;
-        speech.pitch = 1;
-        speech.volume = 1;
-
-        if (englishVoice) {
-            speech.voice = englishVoice;
-        }
-
-        speech.onstart = function() {
-
-            if (thisRequest === requestNumber) {
-                status.textContent = 'English audio guide is playing...';
-            }
-
-        };
-
-        speech.onend = function() {
-
-            if (thisRequest === requestNumber) {
-                status.textContent = 'Audio guide completed.';
-                currentUtterance = null;
-            }
-
-        };
-
-        speech.onerror = function() {
-
-            if (thisRequest === requestNumber) {
-                status.textContent =
-                    'Unable to play the audio guide. Please try again.';
-
-                currentUtterance = null;
-            }
-
-        };
-
-        currentUtterance = speech;
-
-        window.speechSynthesis.speak(speech);
-
-    }
-
-
-    if (window.speechSynthesis.getVoices().length > 0) {
-
-        speakWhenReady();
-
-    } else {
-
-        window.speechSynthesis.onvoiceschanged = function() {
-
-            if (thisRequest === requestNumber) {
-                speakWhenReady();
-            }
-
-        };
-
-        setTimeout(function() {
-
-            if (thisRequest === requestNumber && !currentUtterance) {
-                speakWhenReady();
-            }
-
-        }, 1500);
-
-    }
-
+function playHeritageAudio() {
+    if (!heritageAudio) return;
+    heritageAudio.pause();
+    heritageAudio.currentTime = 0;
+    audioStatus.textContent = "Loading English audio guide...";
+    heritageAudio.play().then(() => {
+        audioStatus.textContent = "English audio guide is playing...";
+    }).catch(() => {
+        audioStatus.textContent = "Unable to play audio. Check your internet connection and try again.";
+    });
 }
 
-
-function stopGuide() {
-
-    requestNumber++;
-
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-    }
-
-    currentUtterance = null;
-
-    document.getElementById('audioStatus').textContent =
-        'Audio guide stopped.';
-
+function stopHeritageAudio() {
+    if (!heritageAudio) return;
+    heritageAudio.pause();
+    heritageAudio.currentTime = 0;
+    audioStatus.textContent = "Audio guide stopped.";
 }
 
+heritageAudio.addEventListener("ended", () => {
+    audioStatus.textContent = "Audio guide completed.";
+});
+
+// Keep compatibility with the existing Play/Stop button names on each page.
+function playGuide() { playHeritageAudio(); }
+function playAudio() { playHeritageAudio(); }
+function speakGuide() { playHeritageAudio(); }
+function stopGuide() { stopHeritageAudio(); }
+function stopAudio() { stopHeritageAudio(); }
 
 function showAR() {
 
@@ -782,15 +695,7 @@ function showAR() {
 
 }
 
-
-window.addEventListener('beforeunload', function() {
-
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-    }
-
-});
-
+window.addEventListener("beforeunload", stopHeritageAudio);
 </script>
 
 </body>
