@@ -254,8 +254,6 @@ section { padding: 80px 9%; }
     font-size: 14px;
 }
 
-/* ENGLISH AUDIO GUIDE */
-
 .audio {
     background: var(--brown);
     color: white;
@@ -278,12 +276,20 @@ section { padding: 80px 9%; }
     flex-wrap: wrap;
 }
 
-button {
-    padding: 13px 22px;
+select, button {
+    padding: 13px 18px;
     border: none;
     border-radius: 3px;
     font-family: 'DM Sans', sans-serif;
     font-size: 14px;
+}
+
+select {
+    background: white;
+    color: var(--brown);
+}
+
+button {
     cursor: pointer;
     background: var(--gold);
     color: var(--dark);
@@ -291,11 +297,6 @@ button {
 }
 
 button:hover { background: #e0b76e; }
-
-.stop {
-    background: white;
-    color: var(--dark);
-}
 
 #speechStatus {
     margin-top: 18px;
@@ -404,7 +405,6 @@ footer span { color: var(--gold); }
             story of a rich cultural and artistic past.
         </p>
     </div>
-
     <img
       src="https://commons.wikimedia.org/wiki/Special:FilePath/Virupaksha%20temple%20hampi.jpg"
       alt="Virupaksha Temple at Hampi">
@@ -442,14 +442,12 @@ footer span { color: var(--gold); }
                 the city developed into an important centre of trade,
                 religion, art and culture.
             </p>
-
             <p class="content-text">
                 Traders from different parts of the world visited
                 Vijayanagara, bringing wealth and cultural exchange.
                 The city was known for its grand temples, busy markets,
                 royal buildings and advanced water-management systems.
             </p>
-
             <p class="content-text">
                 Following the Battle of Talikota in 1565, the city
                 suffered extensive destruction and gradually declined.
@@ -582,24 +580,20 @@ footer span { color: var(--gold); }
     </div>
 </section>
 
-<!-- ENGLISH AUDIO GUIDE -->
-
 <section class="audio" id="audio">
     <div class="section-subtitle">Listen and Discover</div>
-    <h2 class="section-title">Audio Guide</h2>
-
+    <h2 class="section-title">Multilingual Audio Guide</h2>
     <p>
-        Explore the history of Hampi through an English audio narration.
+        Explore the history of Hampi through an audio narration.
+        Select your preferred language and listen to the heritage story.
     </p>
 
     <div class="audio-controls">
-        <button onclick="playAudio()">▶ Play Audio Guide</button>
-        <button class="stop" onclick="stopAudio()">■ Stop</button>
+<button onclick="playAudio()">▶ Play Audio</button>
+        <button onclick="stopAudio()">■ Stop</button>
     </div>
 
-    <div id="speechStatus">
-        Press Play to listen to the Hampi audio guide.
-    </div>
+    <div id="speechStatus">Press Play to listen to the English audio guide.</div>
 </section>
 
 <section class="ar-section">
@@ -608,15 +602,12 @@ footer span { color: var(--gold); }
 
     <div class="ar-box">
         <h3>Bring Heritage to Life</h3>
-
         <p>
             Experience historical monuments through an interactive
             Augmented Reality experience. Scan a supported heritage
             image to explore a digital 3D monument.
         </p>
-
         <button onclick="showARMessage()">Explore in AR</button>
-
         <p id="arMessage" style="margin-top:18px; color:#8b6540;"></p>
     </div>
 </section>
@@ -627,149 +618,49 @@ footer span { color: var(--gold); }
     <p>© 2026 Virtual Heritage Explorer | Hampi, Karnataka</p>
 </footer>
 
+
+<audio id="heritageAudio" preload="auto"><source src="audio/hampi.mp3" type="audio/mpeg"></audio>
+
 <script>
+const heritageAudio = document.getElementById("heritageAudio");
+const audioStatus = document.getElementById("speechStatus");
 
-// ENGLISH HAMPI AUDIO GUIDE
-
-const narration = "Welcome to Hampi, the historic capital of the Vijayanagara Empire. Hampi flourished as a centre of trade, culture, religion and architecture. It is famous for the Virupaksha Temple, Vittala Temple and its magnificent stone chariot. The ruins of Hampi preserve the legacy of a powerful kingdom and its remarkable artistic achievements. The Vijayanagara Empire was founded in 1336 by Harihara I and Bukka Raya I. Under rulers such as Krishnadevaraya, Hampi became an important centre of trade, religion and culture. Following the Battle of Talikota in 1565, the city suffered extensive destruction. Today, Hampi is recognised as a UNESCO World Heritage Site and continues to attract visitors from around the world.";
-
-let currentUtterance = null;
-let requestNumber = 0;
-
-function playAudio() {
-
-    const status = document.getElementById("speechStatus");
-
-    if (!("speechSynthesis" in window) ||
-        !("SpeechSynthesisUtterance" in window)) {
-
-        status.textContent =
-            "Your browser does not support speech playback. Please try an updated browser.";
-
-        return;
-    }
-
-    const thisRequest = ++requestNumber;
-
-    window.speechSynthesis.cancel();
-
-    status.textContent = "Preparing English audio...";
-
-    const speak = () => {
-
-        if (thisRequest !== requestNumber) return;
-
-        const voices = window.speechSynthesis.getVoices();
-
-        // Find an available English voice.
-        // If unavailable, use the system default voice.
-
-        const englishVoice = voices.find(voice =>
-            voice.lang &&
-            voice.lang.toLowerCase().startsWith("en")
-        );
-
-        const utterance = new SpeechSynthesisUtterance(narration);
-
-        if (englishVoice) {
-            utterance.voice = englishVoice;
-            utterance.lang = englishVoice.lang;
-        } else {
-            utterance.lang = "en";
-        }
-
-        utterance.rate = 0.9;
-        utterance.pitch = 1;
-        utterance.volume = 1;
-
-        utterance.onstart = () => {
-
-            if (thisRequest !== requestNumber) return;
-
-            status.textContent =
-                "Playing Hampi audio guide...";
-        };
-
-        utterance.onend = () => {
-
-            if (thisRequest !== requestNumber) return;
-
-            status.textContent =
-                "Audio guide completed.";
-        };
-
-        utterance.onerror = (event) => {
-
-            if (thisRequest !== requestNumber) return;
-
-            if (event.error !== "canceled" &&
-                event.error !== "interrupted") {
-
-                status.textContent =
-                    "Audio playback error. Please check your browser settings or try another browser.";
-            }
-        };
-
-        currentUtterance = utterance;
-
-        window.speechSynthesis.speak(utterance);
-    };
-
-    const voices = window.speechSynthesis.getVoices();
-
-    if (voices.length > 0) {
-
-        speak();
-
-    } else {
-
-        window.speechSynthesis.onvoiceschanged = () => {
-
-            window.speechSynthesis.onvoiceschanged = null;
-
-            speak();
-        };
-
-        window.setTimeout(() => {
-
-            if (thisRequest === requestNumber &&
-                !window.speechSynthesis.speaking) {
-
-                speak();
-            }
-
-        }, 1000);
-    }
+function playHeritageAudio() {
+    if (!heritageAudio) return;
+    heritageAudio.pause();
+    heritageAudio.currentTime = 0;
+    audioStatus.textContent = "Loading English audio guide...";
+    heritageAudio.play().then(() => {
+        audioStatus.textContent = "English audio guide is playing...";
+    }).catch(() => {
+        audioStatus.textContent = "Unable to play audio. Check your internet connection and try again.";
+    });
 }
 
-function stopAudio() {
-
-    requestNumber++;
-
-    if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-    }
-
-    currentUtterance = null;
-
-    document.getElementById("speechStatus").textContent =
-        "Audio guide stopped.";
+function stopHeritageAudio() {
+    if (!heritageAudio) return;
+    heritageAudio.pause();
+    heritageAudio.currentTime = 0;
+    audioStatus.textContent = "Audio guide stopped.";
 }
+
+heritageAudio.addEventListener("ended", () => {
+    audioStatus.textContent = "Audio guide completed.";
+});
+
+// Keep compatibility with the existing Play/Stop button names on each page.
+function playGuide() { playHeritageAudio(); }
+function playAudio() { playHeritageAudio(); }
+function speakGuide() { playHeritageAudio(); }
+function stopGuide() { stopHeritageAudio(); }
+function stopAudio() { stopHeritageAudio(); }
 
 function showARMessage() {
-
     document.getElementById("arMessage").textContent =
         "AR integration will open here once the Unity application is connected.";
 }
 
-window.addEventListener("beforeunload", () => {
-
-    if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-    }
-
-});
-
+window.addEventListener("beforeunload", stopHeritageAudio);
 </script>
 
 </body>
