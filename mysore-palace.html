@@ -263,6 +263,13 @@ section {
     box-shadow: 0 5px 25px #0000000d;
 }
 
+select {
+    padding: 11px;
+    border: 1px solid #c9b99f;
+    border-radius: 4px;
+    margin: 10px;
+}
+
 .ar-box {
     background: #2b1d13;
     color: white;
@@ -272,33 +279,6 @@ section {
     color: #e4d8c9;
     line-height: 1.7;
     margin-top: 12px;
-}
-
-.audio-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.audio-buttons button {
-    padding: 13px 22px;
-    border: none;
-    border-radius: 3px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    background: #c59a51;
-    color: #24180f;
-    font-weight: bold;
-}
-
-.audio-buttons button:hover {
-    background: #e7c17b;
-}
-
-.audio-buttons .stop {
-    background: #ddd;
 }
 
 #speechStatus {
@@ -625,29 +605,27 @@ footer {
         <h2>Explore the Experience</h2>
     </div>
 
-    <!-- ENGLISH AUDIO GUIDE -->
+    <!-- AUDIO GUIDE -->
     <div class="audio-box">
 
         <h3>Listen to the Audio Guide</h3>
 
         <p style="margin-top:10px; color:#66594e">
-            Listen to an introduction to Mysore Palace in English.
+            Listen to a short introduction to Mysore Palace
+            in your preferred language.
         </p>
+<br>
 
-        <div class="audio-buttons">
+        <button class="btn" onclick="speakGuide()">
+            ▶ Play Audio Guide
+        </button>
 
-            <button onclick="speakGuide()">
-                ▶ Play Audio Guide
-            </button>
-
-            <button class="stop" onclick="stopGuide()">
-                ■ Stop
-            </button>
-
-        </div>
+        <button class="btn" onclick="stopGuide()" style="background:#ddd">
+            ■ Stop
+        </button>
 
         <p id="speechStatus">
-            Press Play to listen to the Mysore Palace audio guide.
+            Press Play to listen to the English audio guide.
         </p>
 
     </div>
@@ -689,133 +667,42 @@ footer {
 </footer>
 
 <!-- JAVASCRIPT -->
+
+<audio id="heritageAudio" preload="auto"><source src="audio/mysore-palace.mp3" type="audio/mpeg"></audio>
+
 <script>
+const heritageAudio = document.getElementById("heritageAudio");
+const audioStatus = document.getElementById("speechStatus");
 
-// ENGLISH-ONLY MYSORE PALACE AUDIO GUIDE
-
-const narration = "Welcome to Mysore Palace, also known as Amba Vilas Palace. Located in Mysuru, Karnataka, this magnificent palace served as the residence of the Wadiyar royal family. The present palace was designed by British architect Henry Irwin and completed in 1912. It is famous for its Indo-Saracenic architecture, royal halls, beautiful domes and spectacular illumination. The palace features magnificent spaces such as the Durbar Hall and Kalyana Mantapa, decorated with intricate artwork, colourful stained-glass windows and ornamental pillars. The palace represents the rich history and cultural heritage of the Wadiyar dynasty. Today, Mysore Palace is one of India's most celebrated historical landmarks and attracts visitors from across the world.";
-
-let currentUtterance = null;
-let requestNumber = 0;
-
-function speakGuide() {
-
-    const status = document.getElementById("speechStatus");
-
-    if (!("speechSynthesis" in window) ||
-        !("SpeechSynthesisUtterance" in window)) {
-
-        status.textContent =
-            "Your browser does not support speech playback. Please try an updated browser.";
-
-        return;
-    }
-
-    const thisRequest = ++requestNumber;
-
-    window.speechSynthesis.cancel();
-
-    status.textContent = "Preparing English audio...";
-
-    const startSpeaking = () => {
-
-        if (thisRequest !== requestNumber) return;
-
-        const voices = window.speechSynthesis.getVoices();
-
-        // Find an available English voice.
-        // If unavailable, use the system default voice.
-
-        const englishVoice = voices.find(voice =>
-            voice.lang &&
-            voice.lang.toLowerCase().startsWith("en")
-        );
-
-        currentUtterance =
-            new SpeechSynthesisUtterance(narration);
-
-        if (englishVoice) {
-            currentUtterance.voice = englishVoice;
-            currentUtterance.lang = englishVoice.lang;
-        } else {
-            currentUtterance.lang = "en";
-        }
-
-        currentUtterance.rate = 0.9;
-        currentUtterance.pitch = 1;
-        currentUtterance.volume = 1;
-
-        currentUtterance.onstart = () => {
-
-            if (thisRequest !== requestNumber) return;
-
-            status.textContent =
-                "Playing Mysore Palace audio guide...";
-        };
-
-        currentUtterance.onend = () => {
-
-            if (thisRequest !== requestNumber) return;
-
-            status.textContent =
-                "Audio guide completed.";
-        };
-
-        currentUtterance.onerror = (event) => {
-
-            if (thisRequest !== requestNumber) return;
-
-            if (event.error !== "canceled" &&
-                event.error !== "interrupted") {
-
-                status.textContent =
-                    "Audio playback error. Please check your browser settings or try another browser.";
-            }
-        };
-
-        window.speechSynthesis.speak(currentUtterance);
-    };
-
-    const voices = window.speechSynthesis.getVoices();
-
-    if (voices.length > 0) {
-
-        startSpeaking();
-
-    } else {
-
-        window.speechSynthesis.onvoiceschanged = () => {
-
-            window.speechSynthesis.onvoiceschanged = null;
-
-            startSpeaking();
-        };
-
-        window.setTimeout(() => {
-
-            if (thisRequest === requestNumber &&
-                !window.speechSynthesis.speaking) {
-
-                startSpeaking();
-            }
-
-        }, 1000);
-    }
+function playHeritageAudio() {
+    if (!heritageAudio) return;
+    heritageAudio.pause();
+    heritageAudio.currentTime = 0;
+    audioStatus.textContent = "Loading English audio guide...";
+    heritageAudio.play().then(() => {
+        audioStatus.textContent = "English audio guide is playing...";
+    }).catch(() => {
+        audioStatus.textContent = "Unable to play audio. Check your internet connection and try again.";
+    });
 }
 
-function stopGuide() {
-
-    requestNumber++;
-
-    if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-    }
-
-    currentUtterance = null;
-
-    document.getElementById("speechStatus").textContent =
-        "Audio guide stopped.";
+function stopHeritageAudio() {
+    if (!heritageAudio) return;
+    heritageAudio.pause();
+    heritageAudio.currentTime = 0;
+    audioStatus.textContent = "Audio guide stopped.";
 }
+
+heritageAudio.addEventListener("ended", () => {
+    audioStatus.textContent = "Audio guide completed.";
+});
+
+// Keep compatibility with the existing Play/Stop button names on each page.
+function playGuide() { playHeritageAudio(); }
+function playAudio() { playHeritageAudio(); }
+function speakGuide() { playHeritageAudio(); }
+function stopGuide() { stopHeritageAudio(); }
+function stopAudio() { stopHeritageAudio(); }
 
 function showAR() {
 
@@ -824,14 +711,7 @@ function showAR() {
 
 }
 
-window.addEventListener("beforeunload", () => {
-
-    if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-    }
-
-});
-
+window.addEventListener("beforeunload", stopHeritageAudio);
 </script>
 
 </body>
