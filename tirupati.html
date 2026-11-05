@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -250,11 +249,14 @@ section {
     box-shadow: 0 5px 25px #0000000d;
 }
 
-select {
-    padding: 11px;
-    border: 1px solid #c9b99f;
-    border-radius: 4px;
-    margin: 10px;
+.audio-box button {
+    margin: 8px;
+}
+
+#audioStatus {
+    color: #66594e;
+    font-size: 13px;
+    margin-top: 15px;
 }
 
 .ar-box {
@@ -588,27 +590,20 @@ footer {
         <h3>Listen to the Audio Guide</h3>
 
         <p style="margin-top:10px;color:#66594e">
-            Listen to a short introduction to Tirupati Temple
-            in your preferred language.
+            Listen to the history of Tirupati Temple in English.
         </p>
 
-        <select id="language">
-            <option value="en-IN">English</option>
-            <option value="hi-IN">Hindi</option>
-            <option value="kn-IN">Kannada</option>
-            <option value="te-IN">Telugu</option>
-            <option value="ta-IN">Tamil</option>
-        </select>
-
-        <br>
-
         <button class="btn" onclick="speakGuide()">
-            Play Audio Guide
+            ▶ Play Audio Guide
         </button>
 
         <button class="btn" onclick="stopGuide()" style="background:#ddd">
-            Stop
+            ■ Stop
         </button>
+
+        <p id="audioStatus">
+            Press Play to listen to the English audio guide.
+        </p>
 
     </div>
 
@@ -650,58 +645,151 @@ footer {
 <!-- JAVASCRIPT -->
 <script>
 
+const guideText =
+    "Welcome to Sri Venkateswara Temple, located in Tirumala near Tirupati in Andhra Pradesh. The temple is dedicated to Lord Venkateswara, a form of Lord Vishnu. It is famous for its Dravidian architecture, beautiful gopurams, gold-plated vimana and rich traditions. The temple is one of India's most important pilgrimage destinations.";
+
+let currentUtterance = null;
+let requestNumber = 0;
+
+
 function speakGuide() {
 
     if (!('speechSynthesis' in window)) {
-        alert('Audio guide is not supported in this browser.');
+
+        document.getElementById('audioStatus').textContent =
+            'Audio guide is not supported in this browser.';
+
         return;
     }
 
+    const thisRequest = ++requestNumber;
+
     window.speechSynthesis.cancel();
 
-    const language = document.getElementById('language').value;
+    const status = document.getElementById('audioStatus');
 
-    const guides = {
+    status.textContent = 'Loading English audio guide...';
 
-        'en-IN':
-        "Welcome to Sri Venkateswara Temple, located in Tirumala near Tirupati in Andhra Pradesh. The temple is dedicated to Lord Venkateswara, a form of Lord Vishnu. It is famous for its Dravidian architecture, beautiful gopurams, gold-plated vimana and rich traditions. The temple is one of India's most important pilgrimage destinations.",
+    function speakWhenReady() {
 
-        'hi-IN':
-        "तिरुमला स्थित श्री वेंकटेश्वर मंदिर में आपका स्वागत है। यह मंदिर भगवान विष्णु के स्वरूप भगवान वेंकटेश्वर को समर्पित है। यह अपनी सुंदर द्रविड़ वास्तुकला, गोपुरम और धार्मिक परंपराओं के लिए प्रसिद्ध है।",
+        if (thisRequest !== requestNumber) return;
 
-        'kn-IN':
-        "ತಿರುಮಲದ ಶ್ರೀ ವೆಂಕಟೇಶ್ವರ ದೇವಸ್ಥಾನಕ್ಕೆ ಸ್ವಾಗತ. ಈ ದೇವಸ್ಥಾನವು ಆಂಧ್ರಪ್ರದೇಶದ ತಿರುಪತಿ ಸಮೀಪದಲ್ಲಿದೆ. ಇದು ಭಗವಾನ್ ವಿಷ್ಣುವಿನ ರೂಪವಾದ ಶ್ರೀ ವೆಂಕಟೇಶ್ವರನಿಗೆ ಸಮರ್ಪಿತವಾಗಿದೆ. ಈ ದೇವಸ್ಥಾನವು ತನ್ನ ದ್ರಾವಿಡ ವಾಸ್ತುಶಿಲ್ಪ ಮತ್ತು ಧಾರ್ಮಿಕ ಪರಂಪರೆಗಳಿಗೆ ಪ್ರಸಿದ್ಧವಾಗಿದೆ.",
+        const voices = window.speechSynthesis.getVoices();
 
-        'te-IN':
-        "తిరుమలలోని శ్రీ వేంకటేశ్వర స్వామి ఆలయానికి స్వాగతం. ఈ ఆలయం ఆంధ్రప్రదేశ్‌లోని తిరుపతి సమీపంలో ఉంది. ఇది విష్ణుమూర్తి అవతారమైన శ్రీ వేంకటేశ్వర స్వామికి అంకితం చేయబడింది. ఈ ఆలయం ద్రావిడ నిర్మాణ శైలి మరియు గొప్ప సంప్రదాయాలకు ప్రసిద్ధి చెందింది.",
+        const englishVoice =
+            voices.find(voice =>
+                voice.lang &&
+                voice.lang.toLowerCase() === 'en-in'
+            ) ||
+            voices.find(voice =>
+                voice.lang &&
+                voice.lang.toLowerCase().startsWith('en')
+            );
 
-        'ta-IN':
-        "திருமலையில் உள்ள ஸ்ரீ வெங்கடேஸ்வரர் கோவிலுக்கு வரவேற்கிறோம். இந்த கோவில் ஆந்திரப் பிரதேசத்தில் திருப்பதிக்கு அருகில் அமைந்துள்ளது. இது விஷ்ணுவின் வடிவமான வெங்கடேஸ்வரருக்கு அர்ப்பணிக்கப்பட்டுள்ளது. திராவிட கட்டிடக்கலை மற்றும் பாரம்பரியத்திற்காக இந்த கோவில் புகழ்பெற்றது."
+        const speech = new SpeechSynthesisUtterance(guideText);
 
-    };
+        speech.lang = 'en-IN';
+        speech.rate = 0.88;
+        speech.pitch = 1;
+        speech.volume = 1;
 
-    const speech = new SpeechSynthesisUtterance(guides[language]);
+        if (englishVoice) {
+            speech.voice = englishVoice;
+        }
 
-    speech.lang = language;
-    speech.rate = 0.9;
+        speech.onstart = function() {
 
-    window.speechSynthesis.speak(speech);
+            if (thisRequest === requestNumber) {
+                status.textContent = 'English audio guide is playing...';
+            }
+
+        };
+
+        speech.onend = function() {
+
+            if (thisRequest === requestNumber) {
+                status.textContent = 'Audio guide completed.';
+                currentUtterance = null;
+            }
+
+        };
+
+        speech.onerror = function() {
+
+            if (thisRequest === requestNumber) {
+                status.textContent =
+                    'Unable to play the audio guide. Please try again.';
+
+                currentUtterance = null;
+            }
+
+        };
+
+        currentUtterance = speech;
+
+        window.speechSynthesis.speak(speech);
+
+    }
+
+
+    if (window.speechSynthesis.getVoices().length > 0) {
+
+        speakWhenReady();
+
+    } else {
+
+        window.speechSynthesis.onvoiceschanged = function() {
+
+            if (thisRequest === requestNumber) {
+                speakWhenReady();
+            }
+
+        };
+
+        setTimeout(function() {
+
+            if (thisRequest === requestNumber && !currentUtterance) {
+                speakWhenReady();
+            }
+
+        }, 1500);
+
+    }
+
 }
 
+
 function stopGuide() {
+
+    requestNumber++;
 
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
     }
 
+    currentUtterance = null;
+
+    document.getElementById('audioStatus').textContent =
+        'Audio guide stopped.';
+
 }
+
 
 function showAR() {
 
     document.getElementById('arMessage').textContent =
-    "AR scanner is currently a demonstration placeholder. The Unity image-triggered AR application must be connected to activate the 3D temple experience.";
+        "AR scanner is currently a demonstration placeholder. The Unity image-triggered AR application must be connected to activate the 3D temple experience.";
 
 }
+
+
+window.addEventListener('beforeunload', function() {
+
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+    }
+
+});
 
 </script>
 
